@@ -1,0 +1,17 @@
+<div class="page-container">
+  <div class="page-title">
+    <h1>Notes</h1>
+  </div>
+  <div>
+    <button mat-raised-button (click)="openDialogForNewNotes()">+ Create Notes</button>
+  </div>
+
+  <div class="main-card">
+    <mat-nav-list>
+      <a mat-list-item *ngFor="let notes of notesList" routerLink="/notes/{{notes.id}}">
+        <p class="notes-title">{{notes.title}}</p>
+      </a>
+    </mat-nav-list>
+  </div>
+</div>
+

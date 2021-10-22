@@ -1,0 +1,51 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3'
+
+#Define services
+services:
+
+  #PostgreSQL Database for the application
+  notes-postgres:
+    image: "postgres:9.6-alpine"
+    container_name: notes-postgres
+    #Volume mounted for database for the storage
+    volumes:
+      - notes-data:/var/lib/postgresql/data
+    ports:
+      - 5431:5431 # Forward the exposed port 5431 on the container to port 5431 on the host machine
+
+    #Environment variable for DB name, user and password
+    environment:
+      - POSTGRES_DB=scrum
+      - POSTGRES_USER=scrum
+      - POSTGRES_PASSWORD=scrum
+
+  #Back-end Spring Boot Application
+  notes-app:
+    #The docker file in notes-app build the jar and provides the docker image with the following name.
+    build: ./notes-app
+    container_name: notes-app
+
+    #Environment variables for Spring Boot Application.
+    environment:
+      - DB_SERVER=scrum-postgres
+      - POSTGRES_DB=scrum
+      - POSTGRES_USER=scrum
+      - POSTGRES_PASSWORD=scrum
+    ports:
+      - 8081:8081 # Forward the exposed port 8081 on the container to port 8081 on the host machine
+    links:
+      - notes-postgres
+
+  #Fron-end Angular Application
+  scrum-ui:
+    build: ./notes-ui
+    container_name: notes-ui
+    ports:
+      - 4201:80
+    links:
+      - notes-app
+
+#Volumes for DB data
+volumes:
+  notes-data:
